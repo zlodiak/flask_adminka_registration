@@ -1,29 +1,29 @@
 <!doctype html>
 
-<title>Auth</title>
+<title>Registration</title>
 
-<div class="auth-form">
+<div class="registration-form">
 	<input type="text" name="email" placeholder="email" id="email">
 	<input type="password" name="password" placeholder="password" id="password">
 	<button id="submitBtn">Send</button>
-	<div class="error" id="errorMsg">Authorization is failed</div>
+	<div class="error" id="errorMsg">Registration is failed</div>
 </div>
 
-<a href="/registration">to registration</a>
+<a href="/">to authentication</a>
 
 <style type="text/css">
 	body {
-		background: yellow;
+		background: red;
 		width: 100vw;
 		height: 100vh;
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
 		align-items: center;	
-		flex-direction: column;	
+		flex-direction: column;		
 	}
 
-		.auth-form {
+		.registration-form {
 			width: 200px;
 			background: lime;
 			padding: 20px;
@@ -40,20 +40,20 @@
 	errorMsgElem.style.display = 'none';
 
 	if(submitBtnElem) {
-		submitBtnElem.addEventListener('click', auth);
+		submitBtnElem.addEventListener('click', registration);
 	}
 
-	function auth() {
+	function registration() {
 		const email = document.getElementById('email').value;
 		const password = document.getElementById('password').value;		
 		const xhr = new XMLHttpRequest();
-		xhr.open("POST", "auth_request", true);
+		xhr.open("POST", "registration_request", true);
 		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xhr.onreadystatechange = function() {
-		  if(xhr.status === 200 && this.responseText === 'authorized') {
+		  if(xhr.status === 200 && this.responseText === 'registered') {
 		  	document.location.pathname = '/admin'
 		  } else {
-		  	console.log('Authorization is failed.');
+		  	console.log('Registration is failed.');
 		  	errorMsgElem.style.display = 'block';
 		  }
 		}

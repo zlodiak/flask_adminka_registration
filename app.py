@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, Response, make_response, redirect
+from flask import Flask, render_template, request, Response, make_response, redirect, url_for
 import psycopg2
 import hashlib
 import redis
@@ -14,6 +14,14 @@ def auth():
         return redirect('/admin')
 
     return render_template('auth.html')
+
+
+@app.route('/registration')
+def registration():
+    if 'flask_adminka_authorized_user_id' in request.cookies:
+        return redirect('/admin')
+
+    return render_template('registration.html')
 
 
 @app.route('/admin')
@@ -58,6 +66,7 @@ def admin():
 
 @app.route('/auth_request', methods=['POST'])
 def auth_request():
+    print('------------- auth req starts')
     with DB_connection() as db_connect:
         db_cursor = db_connect.cursor()
 
@@ -74,6 +83,24 @@ def auth_request():
             return resp
         except:
             resp = Response('not authorized')
+            return resp
+
+
+@app.route('/registration_request', methods=['POST'])
+def registration_request():
+    with DB_connection() as db_connect:
+        db_cursor = db_connect.cursor()
+
+        pasword = request.values.get('password')
+        password_hash = hashlib.sha1(pasword.encode('ASCII')).hexdigest()
+        email = request.values.get('email')
+        req = "insert into users(password_hash, email, active) values('" + password_hash + "', '" + email + "', 'TRUE')"
+
+        try:
+            db_cursor.execute(req)
+            redirect(url_for('auth_request'), code=307)
+        except:
+            resp = Response('registration is failed')
             return resp
 
 
